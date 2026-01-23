@@ -1,131 +1,532 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video to Audio Converter</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <title>Video2Audio - Software Portable para Windows</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Configuración de Tailwind -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            500: '#14b8a6', // Teal
+                            600: '#0d9488',
+                            900: '#134e4a',
+                        },
+                        dark: {
+                            900: '#0f172a',
+                            800: '#1e293b',
+                            700: '#334155',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
+        /* Estilos personalizados para Glassmorphism y detalles finos */
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8f9fa;
+            background-color: #0f172a;
+            color: #f8fafc;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(20, 184, 166, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%);
+            background-attachment: fixed;
         }
-        .hero-section {
-            background-color: #007bff;
-            color: white;
-            padding: 60px 0;
-            text-align: center;
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
         }
-        .hero-section h1 {
-            font-size: 48px;
-            font-weight: 600;
+
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
-        .hero-section p {
-            font-size: 20px;
-            margin-bottom: 30px;
+
+        .gradient-text {
+            background: linear-gradient(135deg, #2dd4bf 0%, #818cf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        .btn-custom {
-            background-color: #28a745;
-            color: white;
-            font-weight: 600;
-            border-radius: 10px;
-            padding: 10px 30px;
+
+        /* Estilo tarjeta de software */
+        .software-card {
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
         }
-        .hero-img {
-            margin-top: 30px;
-            max-width: 80%;
-            height: auto;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        
+        .software-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(45, 212, 191, 0.5), transparent);
         }
-        .download-btn {
-            margin-top: 40px;
+
+        .screenshot-container {
+            position: relative;
         }
-        .features-section {
-            padding: 50px 0;
+        
+        .screenshot-container::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent 80%, rgba(15, 23, 42, 0.8) 100%);
+            pointer-events: none;
         }
-        .feature-box {
-            text-align: center;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        .feature-box i {
-            font-size: 40px;
-            color: #007bff;
-            margin-bottom: 15px;
-        }
-        .feature-box h3 {
-            font-size: 22px;
-            font-weight: 600;
-        }
-        footer {
-            padding: 20px;
-            text-align: center;
-            background-color: #343a40;
-            color: white;
-        }
+
     </style>
 </head>
-<body>
+<body class="antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 glass-nav transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-3 cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-brand-500/20">
+                        <i class="fa-solid fa-desktop text-white text-lg"></i>
+                    </div>
+                    <span class="font-bold text-2xl tracking-tight text-white">Video<span class="text-brand-500">2</span>Audio</span>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#features" class="text-gray-300 hover:text-white hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-colors">Características</a>
+                        <a href="#requirements" class="text-gray-300 hover:text-white hover:bg-white/5 px-3 py-2 rounded-md text-sm font-medium transition-colors">Requisitos</a>
+                        <a href="#download-section" class="bg-brand-600 hover:bg-brand-500 text-white px-5 py-2.5 rounded-lg text-sm font-semibold shadow-lg shadow-brand-500/20 transition-all transform hover:-translate-y-0.5">
+                            <i class="fa-solid fa-bolt mr-2"></i>Portable
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="-mr-2 flex md:hidden">
+                    <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none" aria-controls="mobile-menu" aria-expanded="false" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+                        <span class="sr-only">Abrir menú</span>
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="hidden md:hidden glass-panel border-t border-gray-700" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#features" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Características</a>
+                <a href="#requirements" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Requisitos</a>
+                <a href="#download-section" class="text-brand-400 block px-3 py-2 rounded-md text-base font-bold">Descargar Portable</a>
+            </div>
+        </div>
+    </nav>
 
     <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="container">
-            <h1>Convertidor de Video a Audio 100% Free</h1>
-            <p>Extraiga fácilmente audio de alta calidad de cualquier video con nuestro convertidor rápido y confiable.</p>
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+        <!-- Decoracion de fondo -->
+        <div class="absolute top-0 left-1/2 w-full -translate-x-1/2 h-full z-0 pointer-events-none">
+            <div class="absolute top-20 left-10 w-72 h-72 bg-purple-500/20 rounded-full blur-[100px] animate-pulse-slow"></div>
+            <div class="absolute bottom-20 right-10 w-96 h-96 bg-brand-500/10 rounded-full blur-[100px] animate-pulse-slow" style="animation-delay: 2s;"></div>
+        </div>
 
-            <!-- Program Screenshot -->
-            <img src="img/juscoverte-screenshot.jpg" alt="Program Screenshot" class="hero-img">
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8 backdrop-blur-sm animate-float">
+                <span class="flex h-2 w-2 rounded-full bg-brand-500"></span>
+                <span class="text-sm font-medium text-brand-100">Nueva Versión Portable v1.2</span>
+            </div>
 
-            <!-- Download Button -->
-            <div class="download-btn">
-                <a href="https://github.com/juscoder/converter-video-to-audio-python-tkinter/releases/download/v1.0/jusconverter.exe" class="btn btn-custom">
-                    <i class="bi bi-windows"></i> Descargar para Windows de 64 bits
+            <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-8">
+                Convertidor Video a Audio <br>
+                <span class="gradient-text">100% Free</span>
+            </h1>
+            
+            <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-400 mb-12">
+                El software definitivo para extraer audio de video. Descárgalo y úsalo al instante en cualquier PC. Sin esperas, sin instalación.
+            </p>
+
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="#download-section" class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-xl text-white bg-brand-600 hover:bg-brand-500 shadow-lg shadow-brand-500/30 transition-all transform hover:-translate-y-1 hover:scale-105">
+                    <i class="fa-brands fa-windows mr-2 text-2xl"></i>
+                    Descargar Portable
+                </a>
+                <a href="#features" class="inline-flex items-center justify-center px-8 py-4 border border-gray-600 hover:border-gray-400 text-lg font-medium rounded-xl text-gray-300 hover:text-white bg-transparent hover:bg-white/5 transition-all">
+                    Ver Capturas
                 </a>
             </div>
             
+            <div class="mt-6 text-sm text-gray-500">
+                <i class="fa-solid fa-check text-brand-500 mr-1"></i> Libre de Virus
+                <span class="mx-2">•</span>
+                <i class="fa-solid fa-check text-brand-500 mr-1"></i> Versión Portable
+                <span class="mx-2">•</span>
+                <i class="fa-solid fa-check text-brand-500 mr-1"></i> Windows 10/11
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Download Section -->
+    <section id="download-section" class="relative z-20 -mt-10 mb-20">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="glass-panel rounded-3xl p-1 md:p-2 shadow-2xl shadow-black/50">
+                <div class="bg-dark-900/80 rounded-2xl overflow-hidden relative">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2">
+                        <!-- Left: Software Screenshot (Updated) -->
+                        <div class="relative bg-dark-800/50 flex flex-col justify-center items-center overflow-hidden group">
+                            <!-- Background glow for image -->
+                            <div class="absolute inset-0 bg-brand-500/5 group-hover:bg-brand-500/10 transition-colors duration-500"></div>
+                            
+                            <!-- Screenshot Container -->
+                            <div class="relative w-full h-full p-6 md:p-8 flex items-center justify-center screenshot-container">
+                                <div class="relative rounded-lg overflow-hidden shadow-2xl shadow-black border border-white/10 transform group-hover:scale-[1.02] transition-transform duration-500">
+                                    <!-- Using user provided screenshot -->
+                                    <img src="https://video-to-audio.netlify.app/img/juscoverte-screenshot.jpg" 
+                                         alt="Video2Audio Screenshot" 
+                                         class="w-full h-auto object-cover"
+                                         onerror="this.src='https://via.placeholder.com/600x400?text=Vista+Previa+Video2Audio'">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Action Area -->
+                        <div class="p-8 md:p-12 bg-white/5 flex flex-col justify-center border-t md:border-t-0 md:border-l border-white/5 relative">
+                            
+                            <div class="mb-8">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <h3 class="text-3xl font-bold text-white">Video2Audio</h3>
+                                    <span class="bg-brand-500/20 text-brand-300 text-xs font-bold px-2 py-1 rounded-md border border-brand-500/30">PORTABLE</span>
+                                </div>
+                                <p class="text-gray-400">Versión 1.2.0 • x64 • Español</p>
+                            </div>
+
+                            <!-- Estado Inicial: Botón de Descarga -->
+                            <div id="download-card-content" class="w-full">
+                                <ul class="space-y-3 mb-8 text-sm text-gray-300">
+                                    <li class="flex items-center"><i class="fa-solid fa-bolt text-brand-500 w-6"></i> Sin instalación requerida</li>
+                                    <li class="flex items-center"><i class="fa-solid fa-hard-drive text-brand-500 w-6"></i> Peso ligero (49 MB)</li>
+                                    <li class="flex items-center"><i class="fa-brands fa-windows text-brand-500 w-6"></i> Optimizado para Win 10/11</li>
+                                </ul>
+
+                                <button onclick="startDownload()" class="w-full group relative flex items-center justify-center gap-3 px-8 py-4 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold shadow-lg shadow-brand-500/20 transition-all hover:-translate-y-1">
+                                    <i class="fa-brands fa-windows text-2xl group-hover:rotate-12 transition-transform"></i>
+                                    <div class="text-left leading-tight">
+                                        <span class="block text-xs font-medium opacity-80">Descarga Directa</span>
+                                        <span class="block text-lg">Descargar Portable (.exe)</span>
+                                    </div>
+                                </button>
+                                
+                                <p class="mt-6 text-xs text-gray-500 text-center">
+                                    Al descargar aceptas nuestros términos. Archivo libre de malware.
+                                </p>
+                            </div>
+
+                            <!-- Estado de "Descarga en curso" (Oculto) -->
+                            <div id="download-active-state" class="hidden w-full text-center">
+                                <div class="w-16 h-16 mx-auto mb-4 border-4 border-brand-500/30 border-t-brand-500 rounded-full animate-spin"></div>
+                                <h3 class="text-xl font-bold text-white mb-2">Preparando descarga...</h3>
+                                <p class="text-gray-400 text-sm">Tu portable estará listo en segundos.</p>
+                            </div>
+                            
+                            <!-- Estado de "Gracias" (Oculto) -->
+                             <div id="download-thank-you" class="hidden w-full text-center animate-float">
+                                <div class="w-16 h-16 mx-auto mb-4 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center">
+                                    <i class="fa-solid fa-check text-2xl"></i>
+                                </div>
+                                <h3 class="text-xl font-bold text-white mb-2">¡Descarga Iniciada!</h3>
+                                <p class="text-gray-400 text-sm mb-4">Solo abre el archivo <b>.exe</b> y comienza a usarlo. No hace falta instalar nada.</p>
+                                <button onclick="resetDownload()" class="text-sm text-gray-500 hover:text-white transition-colors underline">Volver al inicio</button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            
+            <!-- Trust Badges -->
+            <div class="mt-8 flex flex-wrap justify-center gap-6 md:gap-12 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+                <div class="flex items-center gap-2"><i class="fa-solid fa-shield-virus text-2xl"></i> <span class="text-sm font-semibold">Libre de Virus</span></div>
+                <div class="flex items-center gap-2"><i class="fa-solid fa-bolt text-2xl"></i> <span class="text-sm font-semibold">Ejecución Instantánea</span></div>
+                <div class="flex items-center gap-2"><i class="fa-brands fa-windows text-2xl"></i> <span class="text-sm font-semibold">Windows Nativo</span></div>
+            </div>
         </div>
     </section>
 
     <!-- Features Section -->
-    <section class="features-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="feature-box">
-                        <i class="bi bi-file-earmark-play"></i>
-                        <h3>Conversión de alta calidad</h3>
-                        <p>Convierte videos a audio con una calidad de sonido nítida, mp3 wav</p>
+    <section id="features" class="py-20 bg-dark-900/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-base text-brand-500 font-semibold tracking-wide uppercase">Potencia de Escritorio</h2>
+                <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-white sm:text-4xl">
+                    Más rápido, <span class="text-gray-400">más simple.</span>
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="glass-panel p-8 rounded-2xl hover:bg-white/5 transition-colors duration-300">
+                    <div class="w-14 h-14 bg-blue-500/10 rounded-lg flex items-center justify-center mb-6 border border-blue-500/20">
+                        <i class="fa-solid fa-laptop-code text-2xl text-blue-400"></i>
                     </div>
+                    <h3 class="text-xl font-bold text-white mb-3">100% Portable</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Llévalo en tu USB. No deja archivos basura en el sistema ni modifica el registro de Windows.
+                    </p>
                 </div>
-                <div class="col-md-4">
-                    <div class="feature-box">
-                        <i class="bi bi-fast-forward-circle"></i>
-                        <h3>Rápido y eficiente</h3>
-                        <p>Experimente una conversión rápida sin demoras.</p>
+
+                <!-- Feature 2 -->
+                <div class="glass-panel p-8 rounded-2xl hover:bg-white/5 transition-colors duration-300">
+                    <div class="w-14 h-14 bg-purple-500/10 rounded-lg flex items-center justify-center mb-6 border border-purple-500/20">
+                        <i class="fa-solid fa-layer-group text-2xl text-purple-400"></i>
                     </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Conversión Tipo Archivo</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Convierte videos a audio ilimitadamente en formatos .mp3, .waw, Ahorra horas de trabajo.
+                    </p>
                 </div>
-                <div class="col-md-4">
-                    <div class="feature-box">
-                        <i class="bi bi-check-circle"></i>
-                        <h3>Fácil de usar</h3>
-                        <p>Abre el programa,elige el video, haz clic en convertir y obtén tu audio en segundos.</p>
+
+                <!-- Feature 3 -->
+                <div class="glass-panel p-8 rounded-2xl hover:bg-white/5 transition-colors duration-300">
+                    <div class="w-14 h-14 bg-brand-500/10 rounded-lg flex items-center justify-center mb-6 border border-brand-500/20">
+                        <i class="fa-solid fa-lock text-2xl text-brand-400"></i>
                     </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Privacidad Total</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Tus archivos nunca salen de tu computadora. El procesamiento se realiza localmente usando tu CPU/GPU.
+                    </p>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works (Download Flow) -->
+    <section id="how-it-works" class="py-20 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-white">Listo en 30 segundos</h2>
+                <p class="mt-4 text-gray-400">Sin complicaciones técnicas.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center relative">
+                <!-- Connecting Line (Desktop) -->
+                <div class="hidden md:block absolute top-12 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-gray-700 to-transparent z-0"></div>
+
+                <!-- Step 1 -->
+                <div class="relative z-10 group">
+                    <div class="w-24 h-24 mx-auto bg-dark-800 border-4 border-dark-900 rounded-full flex items-center justify-center mb-6 shadow-xl group-hover:scale-110 transition-transform duration-300">
+                        <i class="fa-solid fa-cloud-arrow-down text-3xl text-gray-500 group-hover:text-brand-500 transition-colors"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">1. Descarga</h3>
+                    <p class="text-sm text-gray-400 px-4">Obtén el archivo .exe (Versión Portable) seguro.</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="relative z-10 group">
+                    <div class="w-24 h-24 mx-auto bg-dark-800 border-4 border-dark-900 rounded-full flex items-center justify-center mb-6 shadow-xl group-hover:scale-110 transition-transform duration-300">
+                        <i class="fa-solid fa-play text-3xl text-gray-500 group-hover:text-brand-500 transition-colors"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">2. Ejecuta al Instante</h3>
+                    <p class="text-sm text-gray-400 px-4">Haz doble clic y abre el programa. <br><b>¡Sin instalación!</b></p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="relative z-10 group">
+                    <div class="w-24 h-24 mx-auto bg-dark-800 border-4 border-dark-900 rounded-full flex items-center justify-center mb-6 shadow-xl group-hover:scale-110 transition-transform duration-300">
+                        <i class="fa-solid fa-music text-3xl text-gray-500 group-hover:text-green-500 transition-colors"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">3. Convierte</h3>
+                    <p class="text-sm text-gray-400 px-4">Arrastra tus videos y obtén el audio inmediatamente.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="requirements" class="py-20 bg-dark-800/30 border-y border-white/5">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-white mb-10 text-center">Preguntas Frecuentes y Requisitos</h2>
+            
+            <div class="space-y-4">
+                <details class="group glass-panel rounded-xl">
+                    <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-6">
+                        <span class="text-white">¿Necesito instalar algo?</span>
+                        <span class="transition group-open:rotate-180">
+                            <i class="fa-solid fa-chevron-down text-brand-500"></i>
+                        </span>
+                    </summary>
+                    <div class="text-gray-400 px-6 pb-6">
+                        No. Es un programa portable. Solo descargas el archivo ejecutable (.exe), lo guardas donde quieras (escritorio, USB, carpeta) y lo abres.
+                    </div>
+                </details>
+
+                <details class="group glass-panel rounded-xl">
+                    <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-6">
+                        <span class="text-white">¿Cuáles son los requisitos mínimos?</span>
+                        <span class="transition group-open:rotate-180">
+                            <i class="fa-solid fa-chevron-down text-brand-500"></i>
+                        </span>
+                    </summary>
+                    <div class="text-gray-400 px-6 pb-6">
+                        Necesitas Windows 10 o Windows 11 (versión de 64 bits). Funciona con 4GB de RAM y no ocupa espacio de instalación.
+                    </div>
+                </details>
+
+                <details class="group glass-panel rounded-xl">
+                    <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-6">
+                        <span class="text-white">¿Es gratuito?</span>
+                        <span class="transition group-open:rotate-180">
+                            <i class="fa-solid fa-chevron-down text-brand-500"></i>
+                        </span>
+                    </summary>
+                    <div class="text-gray-400 px-6 pb-6">
+                        Sí, la versión estándar es completamente gratuita para uso personal.
+                    </div>
+                </details>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer>
-        <p>&copy; 2025 Video to Audio Converter. All Rights Reserved.</p>
+    <footer class="bg-dark-900 pt-16 pb-8 border-t border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center">
+                            <i class="fa-solid fa-desktop text-white text-sm"></i>
+                        </div>
+                        <span class="font-bold text-xl text-white">Video2Audio</span>
+                    </div>
+                    <p class="text-gray-500 text-sm leading-relaxed">
+                        Software portable de conversión multimedia para usuarios de Windows.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Descargas</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-brand-400 transition-colors">Portable Windows (x64)</a></li>
+                        <li><a href="#" class="hover:text-brand-400 transition-colors">Versiones Anteriores</a></li>
+                        <li><a href="#" class="hover:text-brand-400 transition-colors">Registro de Cambios</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Soporte</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-brand-400 transition-colors">Centro de Ayuda</a></li>
+                        <li><a href="#" class="hover:text-brand-400 transition-colors">Reportar Error</a></li>
+                        <li><a href="#" class="hover:text-brand-400 transition-colors">Contacto</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-brand-400 transition-colors">EULA</a></li>
+                        <li><a href="#" class="hover:text-brand-400 transition-colors">Privacidad</a></li>
+                        <li><a href="#" class="hover:text-brand-400 transition-colors">Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-gray-600 text-sm">© 2026 Video2Audio Software. By Justino Ramos-Todos los derechos reservados.</p>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-500 hover:text-brand-400 transition-colors"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#" class="text-gray-500 hover:text-brand-400 transition-colors"><i class="fa-brands fa-github"></i></a>
+                    <a href="#" class="text-gray-500 hover:text-brand-400 transition-colors"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
     </footer>
 
-    <!-- Scripts -->
+    <!-- JavaScript Logic -->
 
+<script>
+const navbar = document.getElementById('navbar');
+const cardContent = document.getElementById('download-card-content');
+const activeState = document.getElementById('download-active-state');
+const thankYouState = document.getElementById('download-thank-you');
+
+// Efecto navbar al hacer scroll (lo dejamos, es útil)
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 20) {
+        navbar.classList.add('shadow-lg');
+        navbar.style.background = 'rgba(15, 23, 42, 0.95)';
+    } else {
+        navbar.classList.remove('shadow-lg');
+        navbar.style.background = 'rgba(15, 23, 42, 0.8)';
+    }
+});
+
+// DESCARGA REAL
+function startDownload() {
+    // Oculta botón
+    cardContent.classList.add('hidden');
+
+    // Muestra cargando
+    activeState.classList.remove('hidden');
+
+    // Abre GitHub en otra pestaña (descarga real)
+    setTimeout(() => {
+        window.open(
+            "https://github.com/juscoder/converter-video-to-audio-python-tkinter/releases/download/v1.0/jusconverter.exe",
+            "_blank"
+        );
+    }, 1200);
+
+    // Muestra mensaje gracias
+    setTimeout(() => {
+        activeState.classList.add('hidden');
+        thankYouState.classList.remove('hidden');
+    }, 3000);
+}
+
+function resetDownload() {
+    thankYouState.classList.add('hidden');
+    cardContent.classList.remove('hidden');
+}
+</script>
 
 </body>
 </html>
